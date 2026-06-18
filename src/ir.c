@@ -7,7 +7,7 @@ static void AppendInstruction(IrBlock *block, IrInstruction *instruction)
     list_append(&block->irInstructions, &instruction->listNode);
 }
 
-static IrInstAdd *IrInstAddCreate(IrState *dstState, IrReference *operand1, IrReference *operand2)
+static IrInstAdd *IrInstAddCreate(IrState *dstState, IrReference *operand0, IrReference *operand1)
 {
     IrInstAdd *add = malloc(sizeof(IrInstAdd));
     *add = (IrInstAdd)
@@ -17,8 +17,8 @@ static IrInstAdd *IrInstAddCreate(IrState *dstState, IrReference *operand1, IrRe
             .type = IRINSTTYPE_ADD
         },
         .dstState = dstState,
-        .operand1 = *operand1,
-        .operand2 = *operand2
+        .operand0 = *operand0,
+        .operand1 = *operand1
     };
     return add;
 }
@@ -119,7 +119,7 @@ IrReference IrReferenceLiteral(int64_t literalValue)
     return (IrReference)
     {
         .type = IRREF_LITERAL,
-        .size = 16,
+        .size = 64,
         .irLiteral = (IrLiteral)
         {
             .literalValue = literalValue
@@ -127,9 +127,9 @@ IrReference IrReferenceLiteral(int64_t literalValue)
     };
 }
 
-void IrAdd(IrBlock *block, IrState *dst, IrReference *operand1, IrReference *operand2)
+void IrAdd(IrBlock *block, IrState *dst, IrReference *operand0, IrReference *operand1)
 {
-    IrInstAdd *addInst = IrInstAddCreate(dst, operand1, operand2);
+    IrInstAdd *addInst = IrInstAddCreate(dst, operand0, operand1);
     AppendInstruction(block, (IrInstruction*)addInst);
 }
 
@@ -147,25 +147,28 @@ void IrBlockTranslate(IrCtx *ctx, IrBlock *block)
     if (!inst) return;
 
     IrInstAdd *addInst = (IrInstAdd*)inst;
-    int registerIds[] = { 0, 1, 2, 3 };
+    int registerIds[] = { 4, 3, 2, 1 };
     int clobbers[4] = {0};
     int cobberCount = 0;
     IrArchPhysicalLocation operands[3] = 
     {
         (IrArchPhysicalLocation)
         {
-            .physLocationType = IRARCH_PHYS_LOCATION_LITERAL,
-            .reference = addInst->operand1
+            .physLocationType = IRARCH_PHYS_LOCATION_STACK,
+            .reference = addInst->operand0,
+            .address = -20
         },
         (IrArchPhysicalLocation)
         {
-            .physLocationType = IRARCH_PHYS_LOCATION_LITERAL,
-            .reference = addInst->operand2
+            .physLocationType = IRARCH_PHYS_LOCATION_STACK,
+            .reference = addInst->operand1,
+            .address = -30
         },
         (IrArchPhysicalLocation)
         {
-            .physLocationType = IRARCH_PHYS_LOCATION_REGISTER,
-            .registerId = 3
+            .physLocationType = IRARCH_PHYS_LOCATION_STACK,
+            .address = -8
+            //.registerId = 5
         },
     };
 

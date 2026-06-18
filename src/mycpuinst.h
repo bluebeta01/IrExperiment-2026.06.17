@@ -72,7 +72,8 @@
     X(MYCPU_INST_SUB_65, 65, "sub"),\
     X(MYCPU_INST_SUB_66, 66, "sub"),\
     X(MYCPU_INST_XOR_67, 67, "xor"),\
-    X(MYCPU_INST_XOR_68, 68, "xor"),
+    X(MYCPU_INST_XOR_68, 68, "xor"),\
+    X(MYCPU_INST_LABEL, 0, "label"),
 
 typedef enum
 {
@@ -86,6 +87,7 @@ typedef struct
 {
     MyCpuInstType type;
     ListNode listNode;
+    int labelId;
     int16_t immA;
     int16_t immB;
     int16_t immD;
@@ -97,15 +99,17 @@ typedef struct
 typedef struct
 {
     Vector instructions;
+    int labelIdCounter;
 } MyCpuProgram;
 
 const char *MyCpuInstMnemonics[];
 
 void MyCpuProgramInit(MyCpuProgram* program);
-void MyCpuProgramDestroy(MyCpuInst *inst);
+void MyCpuProgramDestroy(MyCpuProgram* program);
 void MyCpuInstACreate(MyCpuProgram *program, LinkedList *routineList, MyCpuInstType type, int16_t literal);
 void MyCpuInstBCreate(MyCpuProgram *program, LinkedList *routineList, MyCpuInstType type, uint8_t reg0, int16_t literal);
 void MyCpuInstCCreate(MyCpuProgram *program, LinkedList *routineList, MyCpuInstType type, uint8_t reg0, uint8_t reg1, uint8_t reg2);
-void MyCpuInstDCreate(MyCpuProgram *program, LinkedList *routineList, MyCpuInstType type, uint8_t reg0, uint8_t reg1, uint8_t reg2, int16_t literal);
+void MyCpuInstDCreate(MyCpuProgram *program, LinkedList *routineList, MyCpuInstType type, uint8_t reg0, uint8_t reg1, uint8_t reg2, int16_t literal, int labelId);
+MyCpuInst *MyCpuInstLabelCreate(MyCpuProgram *program);
 
 #endif

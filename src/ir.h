@@ -42,8 +42,8 @@ typedef struct
 {
     IrInstruction irInstruction;
     IrState *dstState;
+    IrReference operand0;
     IrReference operand1;
-    IrReference operand2;
 } IrInstAdd;
 
 void IrCtxInit(IrCtx *ctx, IrArch *arch);
@@ -51,8 +51,8 @@ void IrCtxDestroy(IrCtx *ctx);
 IrBlock *IrBlockCreate(IrCtx *ctx);
 IrState *IrDeclareState(IrCtx *ctx, IrBlock* block, int size, const char* name);
 IrReference IrReferenceState(IrState *state);
-IrReference IrReferenceLiteral(uint64_t literalValue, bool isNegative, int size);
-void IrAdd(IrBlock *block, IrState *dst, IrReference *operand1, IrReference *operand2);
+IrReference IrReferenceLiteral(int64_t literalValue);
+void IrAdd(IrBlock *block, IrState *dst, IrReference *operand0, IrReference *operand1);
 
 void IrBlockTranslate(IrCtx *ctx, IrBlock *block);
 
