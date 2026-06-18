@@ -1,0 +1,9 @@
+IR API Notes:
+* When doing an add, the size of the desination data must be equal to the larger of the two operands
+
+
+Compilation Process:
+* Convert to IR
+* Optimize IR
+* Convert values sizes to a multiple of the architecture's byte size in bits
+* Adjust literals to the smallest size
